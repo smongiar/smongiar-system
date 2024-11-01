@@ -1,0 +1,7 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: smongiar
+  description: smongiar system
+spec:
+  owner: group:default/backstage-admins

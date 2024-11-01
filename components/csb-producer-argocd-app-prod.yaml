@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: csb-producer-prod
+  namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/smongiar/developer-charts
+    targetRevision: HEAD
+    path: spring-boot-application
+    helm:
+      values: |
+        system: smongiar
+        component: csb-producer
+        environment: prod
+        image:
+          tag: latest
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smongiar-prod
+  syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=false
+    - RespectIgnoreDifferences=true
+    - ApplyOutOfSyncOnly=true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 10m

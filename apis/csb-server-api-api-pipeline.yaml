@@ -15,7 +15,7 @@ spec:
     path: api-specification-pipeline
     helm:
       values: |
-        domain: contract-first-idp
+        domain: smongiar
         system: smongiar
         component: csb-server-api
         groupid: com.redhat.smongiar

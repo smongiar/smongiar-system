@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: smongiar-csb-server-api-api-pipeline
+  namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    system: smongiar
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/contract-first-idp/developer-charts
+    targetRevision: HEAD
+    path: api-specification-pipeline
+    helm:
+      values: |
+        domain: contract-first-idp
+        system: smongiar
+        component: csb-server-api
+        groupid: com.redhat.smongiar
+        apicurioRegistry: registry-apicurio-registry.apps.developer-hub.fuse.integration-qe.com
+        mockRegistry: microcks-microcks.apps.developer-hub.fuse.integration-qe.com
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: smongiar-build
+  syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=false
+    - RespectIgnoreDifferences=true
+    - ApplyOutOfSyncOnly=true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 10m
